@@ -88,6 +88,8 @@
       </v-card>
     </v-dialog>
   </v-container>
+
+  <Card :heroes="heroes" />
 </template>
   
     
@@ -99,8 +101,13 @@
     
     <script>
 import axios from "axios";
+import Card from "./Card.vue";
 
 export default {
+  components: {
+    Card,
+  },
+
   data: () => ({
     model: "Todos Cavaleiros",
     dialog: false,
@@ -116,12 +123,22 @@ export default {
       "Sabedoria",
       "Carisma",
     ],
+    heroes: [],
   }),
 
   watch: {
     weapons: {
       handler: "updateWeaponEquippedStatus",
       deep: true,
+    },
+    model: {
+      handler(val) {
+        if (val === "Hall Heróis") {
+          this.findHeroies("heroes");
+        } else {
+          this.findHeroies("");
+        }
+      },
     },
   },
   methods: {
@@ -168,6 +185,20 @@ export default {
       };
 
       return weaponsFormat[weapons];
+    },
+
+    async findHeroies(type) {
+      this.loading = true;
+      try {
+        const response = await axios.get(
+          `http://localhost:3030/api/v1/knights?term=${type}`
+        );
+        this.heroes = response.data.data;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
     },
 
     async createKnight() {
@@ -221,6 +252,7 @@ export default {
         });
         this.dialog = false;
         this.loading = false;
+        location.reload();
       } catch (error) {
         console.error(error);
         this.snackbarText = "Erro ao salvar cavaleiro: " + error.message;
