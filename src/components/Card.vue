@@ -1,72 +1,92 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row justify="space-around">
-      <v-card
+      <v-col
         v-for="knight in knights"
         :key="knight.id"
-        width="300"
-        class="card-bottom-margin"
-        style="padding-bottom: 20px"
+        cols="12"
+        md="6"
+        lg="4"
+        xl="3"
       >
-        <v-img height="200" src="../assets/banner.jpg" cover class="text-white">
-          <v-toolbar color="rgba(0, 0, 0, 0)" theme="dark">
-            <v-toolbar-title class="text-h6 color-name">
-              {{ knight.nickname }}
-            </v-toolbar-title>
+        <v-card class="card-bottom-margin" style="padding-bottom: 20px">
+          <v-img
+            height="200"
+            src="../assets/banner.jpg"
+            cover
+            class="text-white"
+          >
+            <v-toolbar color="rgba(0, 0, 0, 0)" theme="dark">
+              <v-toolbar-title class="text-h6 color-name">
+                {{ knight.nickname }}
+              </v-toolbar-title>
 
-            <template v-slot:append>
-              <v-btn @click="editNickname(knight.id)" color="error" icon>
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-btn @click="deleteKnight(knight.id)" color="error" icon>
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </template>
-          </v-toolbar>
-        </v-img>
-        <v-card-text>
-          <v-row no-gutters>
-            <v-col>
-              <v-sheet class="pa-2 ma-2"
-                >Idade:
-                <strong class="color-descriptions">{{ knight.age }}</strong>
-              </v-sheet>
-            </v-col>
-            <v-col>
-              <v-sheet class="pa-2 ma-2">
-                Qtd.Armas:
-                <strong class="color-descriptions">{{ knight.weapons }}</strong>
-              </v-sheet>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col>
-              <v-sheet class="pa-3 ma-2">
-                Atributo:
-                <strong class="color-descriptions">{{
-                  attributeMap[knight.attribute]
-                }}</strong>
-              </v-sheet>
-            </v-col>
-            <v-col>
-              <v-sheet class="pa-2 ma-2">
-                Ataque:
-                <strong class="color-descriptions">{{ knight.attack }}</strong>
-              </v-sheet>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col>
-              <v-sheet class="pa-2 ma-2"> Exp:</v-sheet>
-            </v-col>
-          </v-row>
-          <v-progress-linear v-model="progress" color="red" height="25">
-            <template v-slot:default="{ value }">
-              <strong>{{ Math.ceil(value) }}%</strong>
-            </template>
-          </v-progress-linear>
-        </v-card-text>
-      </v-card>
+              <template v-slot:append>
+                <v-btn @click="editNickname(knight.id)" color="error" icon>
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn @click="deleteKnight(knight.id)" color="error" icon>
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </template>
+            </v-toolbar>
+          </v-img>
+          <v-card-text>
+            <v-row no-gutters>
+              <v-col>
+                <v-sheet class="pa-2 ma-2"
+                  >Idade:
+                  <strong class="color-descriptions">{{ knight.age }}</strong>
+                </v-sheet>
+              </v-col>
+              <v-col>
+                <v-sheet class="pa-2 ma-2">
+                  Qtd.Armas:
+                  <strong class="color-descriptions">{{
+                    knight.weapons
+                  }}</strong>
+                </v-sheet>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <v-col>
+                <v-sheet class="pa-3 ma-2">
+                  Atributo:
+                  <strong class="color-descriptions">{{
+                    attributeMap[knight.attribute]
+                  }}</strong>
+                </v-sheet>
+              </v-col>
+              <v-col>
+                <v-sheet class="pa-2 ma-2">
+                  Ataque:
+                  <strong class="color-descriptions">{{
+                    knight.attack
+                  }}</strong>
+                </v-sheet>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <v-col>
+                <v-sheet class="pa-2 ma-2"> Exp:</v-sheet>
+              </v-col>
+            </v-row>
+            <v-progress-linear
+              max="8500"
+              v-model="knight.exp"
+              color="red"
+              height="25"
+            >
+              <template v-slot:default="{ value }">
+                <strong>{{ Math.ceil(value) }}%</strong>
+              </template>
+            </v-progress-linear>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="showDetailsModal(knight)"> Detalhes </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
     </v-row>
     <v-dialog v-model="modalOpen" max-width="500">
       <v-card>
@@ -126,6 +146,39 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <v-dialog
+    v-model="detailsModalOpen"
+    max-width="500"
+    transition="scale-transition"
+  >
+    <v-card class="custom-card">
+      <v-card-title class="headline">Detalhes do Cavaleiro</v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col cols="12" md="6">
+            <p><strong>Apelido:</strong> {{ selectedKnight.nickname }}</p>
+            <p><strong>Idade:</strong> {{ selectedKnight.age }}</p>
+            <p><strong>Armas:</strong> {{ selectedKnight.weapons }}</p>
+          </v-col>
+          <v-col cols="12" md="6">
+            <p>
+              <strong>Atributo:</strong>
+              {{ attributeMap[selectedKnight.attribute] }}
+            </p>
+            <p><strong>Ataque:</strong> {{ selectedKnight.attack }}</p>
+            <p><strong>Exp:</strong> {{ selectedKnight.exp }}</p>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn class="primary" color="black" text outlined @click="detailsModalOpen = false">
+          Fechar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -138,6 +191,8 @@ export default {
     modalOpen: false,
     confirmDeleteKnightId: null,
     confirmEditModal: false,
+    detailsModalOpen: false,
+    selectedKnight: null,
     attributeMap: {
       strength: "Força",
       dexterity: "Destreza",
@@ -148,18 +203,12 @@ export default {
     },
   }),
 
-  computed: {
-    progress() {
-      const baseExp = 10000;
-      const totalExp = this.knights.reduce(
-        (sum, knight) => sum + knight.exp,
-        0
-      );
-      return (totalExp / baseExp) * 100;
-    },
-  },
-
   methods: {
+    showDetailsModal(knight) {
+      this.selectedKnight = knight;
+      this.detailsModalOpen = true;
+    },
+
     async getKnights() {
       await axios.get("http://localhost:3030/api/v1/knights").then((res) => {
         this.knights = res.data.data;
@@ -232,5 +281,45 @@ export default {
 
 .color-descriptions {
   color: #cc1515;
+}
+
+.custom-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.v-btn.primary {
+  color: #fff;
+}
+
+.v-btn.primary:hover {
+  background-color: #2196f3;
+}
+
+.v-btn.primary:active {
+  background-color: #1976d2;
+}
+
+.v-btn.primary:focus {
+  box-shadow: 0 0 0 2px #2196f3;
+}
+
+.v-dialog {
+  transition: scale 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.scale-transition-enter {
+  transform: scale(0);
+}
+
+.scale-transition-enter-active {
+  transform: scale(1);
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.scale-transition-leave-active {
+  transform: scale(0);
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 </style>
