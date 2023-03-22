@@ -1,7 +1,13 @@
 <template>
   <v-container>
     <v-row justify="space-around">
-      <v-card v-for="knight in knights" :key="knight.id" width="300">
+      <v-card
+        v-for="knight in knights"
+        :key="knight.id"
+        width="300"
+        class="card-bottom-margin"
+        style="padding-bottom: 20px"
+      >
         <v-img height="200" src="../assets/banner.jpg" cover class="text-white">
           <v-toolbar color="rgba(0, 0, 0, 0)" theme="dark">
             <v-toolbar-title class="text-h6 color-name">
@@ -210,6 +216,10 @@ export default {
 <style>
 .color-name {
   color: #cc1515;
+}
+
+.card-bottom-margin {
+  margin-bottom: 3%;
 }
 
 .color-descriptions {
