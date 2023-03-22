@@ -51,6 +51,7 @@
             ></v-text-field>
             <v-text-field
               v-model="weapon.mod"
+              disabled
               :label="`Modificador da arma ${index + 1}`"
               :error="!weapon.mod"
             ></v-text-field>
@@ -130,10 +131,13 @@ export default {
       this.updateWeaponEquippedStatus();
       this.weapons.push({
         name: "",
-        mod: "",
+        mod: Math.floor(Math.random() * 6) - 2, // Generate random number between -2 and 3
         attr: "",
         equipped: true,
       });
+      if (this.weapons[this.weapons.length - 1].mod < -2) {
+        this.weapons[this.weapons.length - 1].mod = -2; // Don't allow modifier to be less than -2
+      }
     },
 
     updateWeaponEquippedStatus() {
