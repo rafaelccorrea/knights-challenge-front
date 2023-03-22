@@ -41,10 +41,10 @@
           </v-row>
           <v-row no-gutters>
             <v-col>
-              <v-sheet class="pa-2 ma-2">
+              <v-sheet class="pa-3 ma-2">
                 Atributo:
                 <strong class="color-descriptions">{{
-                  knight.attribute
+                  attributeMap[knight.attribute]
                 }}</strong>
               </v-sheet>
             </v-col>
@@ -138,6 +138,14 @@ export default {
     modalOpen: false,
     confirmDeleteKnightId: null,
     confirmEditModal: false,
+    attributeMap: {
+      strength: "Força",
+      dexterity: "Destreza",
+      constitution: "Constituição",
+      intelligence: "Inteligência",
+      wisdom: "Sabedoria",
+      charisma: "Carisma",
+    },
   }),
 
   computed: {

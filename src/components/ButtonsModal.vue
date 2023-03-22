@@ -1,6 +1,6 @@
 <template>
   <v-container :class="{ loading: loading }">
-    <v-row class="mb-6" no-gutters>
+    <v-row class="mb-1" no-gutters>
       <v-col cols="4">
         <v-sheet class="pa-2 ma-2">
           <v-switch
@@ -110,8 +110,6 @@ export default {
     weapons: [],
     attributes: [
       "Força",
-      "Agilidade",
-      "Resistência",
       "Destreza",
       "Constituição",
       "Inteligência",
@@ -159,6 +157,19 @@ export default {
       });
     },
 
+    depara(weapons) {
+      const weaponsFormat = {
+        Força: "strength",
+        Destreza: "dexterity",
+        Constituição: "constitution",
+        Inteligência: "intelligence",
+        Sabedoria: "wisdom",
+        Carisma: "charisma",
+      };
+
+      return weaponsFormat[weapons];
+    },
+
     async createKnight() {
       try {
         // Validate fields
@@ -185,13 +196,27 @@ export default {
         this.weapons.forEach((weapon) => {
           weapon.equippedRequired =
             weapon.attr && weapon.attr !== "" && !weapon.equipped;
+
+          // Call the depara function to format the weapon attribute
+          weapon.attr = this.depara(weapon.attr);
         });
 
+        // Loop through the weapons and set keyAttribute if equipped is true
+        let keyAttribute = "";
+        for (let i = 0; i < this.weapons.length; i++) {
+          const weapon = this.weapons[i];
+          if (weapon.equipped) {
+            keyAttribute = weapon.attr;
+            break;
+          }
+        }
+
         this.loading = true;
-        const response = await axios.post("/api/knights", {
+        await axios.post("http://localhost:3030/api/v1/knights", {
           name: this.name,
           nickname: this.nickname,
           birthday: this.birthday,
+          keyAttribute,
           weapons: this.weapons,
         });
         this.dialog = false;
